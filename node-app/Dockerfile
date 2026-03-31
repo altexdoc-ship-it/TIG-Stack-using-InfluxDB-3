@@ -1,31 +1,34 @@
-# Use the official Node.js 20 slim image as a base
-FROM node:20-slim
+# Use the official Node.js 24 slim image as the base
+FROM node:24-slim
 
-# Install system dependencies for ODBC and driver installation
+# Install system utilities (Docker will try to pull these from cache or proxy)
+# These are required to convert and install the IBM i driver
 RUN apt-get update && apt-get install -y \
     unixodbc \
     unixodbc-dev \
-    wget \
     alien \
     && rm -rf /var/lib/apt/lists/*
-
-# Download and install the IBM i Access ODBC driver for Linux
-# This allows Node.js to talk to your IBM i 7.5
-RUN wget https://public.dhe.ibm.com/software/ibmi/products/access/linux/v1r1m0/i686/ibm-i-access-1.1.0.2-1.0.i686.rpm \
-    && alien -i ibm-i-access-1.1.0.2-1.0.i686.rpm
 
 # Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package files and install Node.js dependencies
+# COPY the RPM file you downloaded manually from your Windows folder to the container
+# This bypasses the Port 443 firewall restriction
+COPY ibm-iaccess-1.1.0.29-1.0.x86_64.rpm ./
+
+# Install the driver from the local file and then delete the RPM to save space
+RUN alien -i ibm-iaccess-1.1.0.29-1.0.x86_64.rpm && \
+    rm ibm-iaccess-1.1.0.29-1.0.x86_64.rpm
+
+# Copy package configuration and install Node.js libraries (express, odbc)
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of your application code
+# Copy the rest of your application code (index.js, etc.)
 COPY . .
 
-# Expose the port for the JSON API
+# Open port 3005 for the JSON API
 EXPOSE 3005
 
-# Start the application
+# Command to start your Node.js adapter
 CMD ["node", "index.js"]
