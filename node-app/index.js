@@ -11,7 +11,7 @@ app.get('/api/status', async (req, res) => {
         const connection = await odbc.connect(connectionString);
         
         // Example SQL: Fetch CPU and ASP (Disk) usage from IBM i services
-        const sql = `SELECT * FROM QSYS2.SYSTEM_STATUS_INFO`;
+        const sql = `select ELAPSED_CPU_USED from QSYS2.SYSTEM_STATUS_INFO_BASIC`;
         const result = await connection.query(sql);
         
         await connection.close();
