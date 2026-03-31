@@ -4,7 +4,7 @@ const app = express();
 const port = 3005; // Make sure this is 3005 to match the Grafana datasource configuration
 
 // Update these with your IBM i details or use environment variables
-const connectionString = `DRIVER={IBM i Access ODBC Driver};SYSTEM=your_ip;UID=your_user;PWD=your_password;`;
+const connectionString = `DRIVER={IBM i Access ODBC Driver};SYSTEM=192.168.240.1;UID=ISAAL;PWD=mask8080;`;
 
 app.get('/api/status', async (req, res) => {
     try {
