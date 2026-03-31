@@ -27,9 +27,9 @@ services:
       - "3005:3005" # Changed from 3000:3000 to avoid conflict with Grafana
     # Environment variables for your IBM i connection
     environment:
-      - DB_HOST=your_ibm_i_ip
-      - DB_USER=your_user
-      - DB_PASS=your_password
+      - DB_HOST=192.168.240.1
+      - DB_USER=ISAAL
+      - DB_PASS=mask8080
 
   telegraf:
     container_name: telegraf
